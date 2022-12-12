@@ -31,17 +31,27 @@ router.post('/',async(req,res)=>{
 
 router.put('/:postId',async(req,res)=>{
     try{
+        console.log(req.params.postId)
+        
+        const userf=await Post.find({"_id":req.params.postId})
+
+        console.log(userf)
+        console.log(userf[0].user,req.user)
+        console.log(req.body)
+        if(userf[0].user==req.user){
+           console.log(req.body)
      
-     if(req.body.title!==undefined || req.body.body!=undefined || req.body.image!==undefined){
         const update=await Post.updateMany(req.body)
-     }
+     
 
      
      res.status(200).json({
          status:"success",
       
      })
-    }catch(e){
+    }
+}
+    catch(e){
         res.status(403).json({
          status:"failure",
          message:e.message
@@ -53,9 +63,11 @@ router.put('/:postId',async(req,res)=>{
  
 router.delete('/:postId',async(req,res)=>{
     try{
+        const user=await Post.find({"_id":req.params.postId})
+        if(user[0].user==req.user){
      
      
-        const deleteUser=await Post.deleteOne({"_id":req.params.id})
+        const deleteUser=await Post.deleteOne({"_id":req.params.postId})
      
 
      
@@ -63,6 +75,7 @@ router.delete('/:postId',async(req,res)=>{
          status:"Successfully deleted",
       
      })
+    }
     }catch(e){
         res.status(403).json({
          status:"failure",
@@ -75,9 +88,9 @@ router.delete('/:postId',async(req,res)=>{
 router.get('/',async(req,res)=>{
     try{
      
-     
-        const User=await Post.find({})
-        
+       console.log(req.user)
+        const User=await Post.find({"user":req.user})
+        console.log(User)
 
      
      res.status(200).json({
